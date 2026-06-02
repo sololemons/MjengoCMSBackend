@@ -4,5 +4,6 @@ public enum MaterialMovementType {
     RECEIVED,
     ISSUED,
     DAMAGED,
-    LOSS
+    LOSS,
+    RETURNED
 }

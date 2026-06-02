@@ -1,5 +1,6 @@
 package com.authenticationservice.security.services;
 
+import com.authenticationservice.authentication.dtos.AccountStatus;
 import com.authenticationservice.authentication.entities.Permissions;
 import com.authenticationservice.authentication.entities.Roles;
 import com.authenticationservice.authentication.entities.Users;
@@ -105,6 +106,7 @@ public class AuthenticationService {
                     .email(email)
                     .phoneNumber(request.getPhoneNumber())
                     .role(superAdminRole)
+                    .accountStatus(AccountStatus.ACTIVE)
                     .password(passwordEncoder.encode(password))
                     .build();
 

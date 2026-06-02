@@ -1,17 +1,18 @@
 package com.authenticationservice.authentication.services;
 
 import com.authenticationservice.authentication.dtos.AccountStatus;
-import com.authenticationservice.authentication.dtos.UserDto;
 import com.authenticationservice.authentication.entities.Roles;
 import com.authenticationservice.authentication.entities.Users;
 import com.authenticationservice.authentication.repositories.UsersRepository;
 import com.authenticationservice.authentication.utilis.DtoMapper;
 import com.authenticationservice.authentication.utilis.HelperMethods;
 import com.authenticationservice.security.services.AuthenticationService;
+import com.mjengoshareddtos.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -82,5 +83,13 @@ public class UserService {
         usersRepository.save(user);
 
         return "Account status updated to: " + user.getAccountStatus();
+    }
+    public List<UserDto> getStorekeepers() {
+
+        List<Users> storekeepers = usersRepository.findUsersByRole_Name("STORE_KEEPER");
+
+        return storekeepers.stream()
+                .map(dtoMapper::mapToDto)
+                .collect(Collectors.toList());
     }
 }

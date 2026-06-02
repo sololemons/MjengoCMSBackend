@@ -49,5 +49,15 @@ public class MaterialTracking {
     @JoinColumn(name = "supplier_id")
     private Suppliers suppliers;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tracking_parent_id")
+    private MaterialTracking trackingParentId;
+
+    @Column(name = "reason_for_loss")
+    private String reasonForLoss;
+
+    @Column(name = "reported_by")
+    private String reportedBy;
+
 
 }

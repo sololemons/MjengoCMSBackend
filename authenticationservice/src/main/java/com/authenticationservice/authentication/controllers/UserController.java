@@ -1,16 +1,16 @@
 package com.authenticationservice.authentication.controllers;
 
-import com.authenticationservice.authentication.dtos.UserDto;
-import com.authenticationservice.authentication.repositories.UsersRepository;
 import com.authenticationservice.authentication.services.UserService;
-import com.authenticationservice.authentication.utilis.DtoMapper;
+import com.mjengoshareddtos.UserDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth/user")
@@ -54,4 +54,10 @@ public class UserController {
         return ResponseEntity.ok(userService.toggleAccountStatus(userId));
     }
 
+    @GetMapping("/get/storekeepers")
+    public ResponseEntity<List<UserDto>> getStorekeepers() {
+        log.info("Fetching storekeepers from UserController");
+        return ResponseEntity.ok(userService.getStorekeepers());
+
+}
 }

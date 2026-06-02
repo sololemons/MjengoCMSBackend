@@ -1,7 +1,7 @@
 package com.authenticationservice.authentication.utilis;
 
-import com.authenticationservice.authentication.dtos.UserDto;
 import com.authenticationservice.authentication.entities.Users;
+import com.mjengoshareddtos.UserDto;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

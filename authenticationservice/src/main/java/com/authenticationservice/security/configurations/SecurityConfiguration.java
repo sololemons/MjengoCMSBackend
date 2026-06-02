@@ -35,6 +35,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/auth/register").permitAll()
                         .requestMatchers("/auth/authenticate").permitAll()
+                        //.requestMatchers("/auth/user/get/storekeepers").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

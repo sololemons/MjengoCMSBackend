@@ -1,6 +1,7 @@
 package com.storekeeperservice.entities;
 
 import com.storekeeperservice.dtos.MachineryCondition;
+import com.storekeeperservice.dtos.StockStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,8 @@ public class Materials {
     private long quantity;
     @Column(name = "denomination")
     private String denomination;
+    @Column(name = "min_threshold")
+    private Long minThreshold;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
@@ -33,5 +36,9 @@ public class Materials {
     @Enumerated(EnumType.STRING)
     private MachineryCondition machineryCondition;
     @Column(name = "last_updated")
-    private LocalDateTime lastUpdated;
+    private LocalDateTime lastUpdated = LocalDateTime.now();
+    @Column(name = "stock_status")
+    @Enumerated(EnumType.STRING)
+    private StockStatus stockStatus;
+
 }

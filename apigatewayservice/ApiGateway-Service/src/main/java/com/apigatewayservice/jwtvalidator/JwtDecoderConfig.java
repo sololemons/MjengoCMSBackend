@@ -33,16 +33,29 @@ public class JwtDecoderConfig {
 
     @Bean
     public ReactiveJwtAuthenticationConverter jwtAuthenticationConverter() {
-
         ReactiveJwtAuthenticationConverter converter = new ReactiveJwtAuthenticationConverter();
 
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
-
             List<String> permissions = jwt.getClaim("permissions");
+            if (permissions == null) {
+                permissions = new java.util.ArrayList<>();
+            }
 
-            return Flux.fromIterable(permissions)
-                    .map(SimpleGrantedAuthority::new);
+            String role = jwt.getClaim("role");
 
+            List<SimpleGrantedAuthority> authorities = new java.util.ArrayList<>(
+                    permissions.stream()
+                            .map(SimpleGrantedAuthority::new)
+                            .toList()
+            );
+
+            // 4. Add the ROLE_ prefix to the role and add to list
+            if (role != null && !role.isEmpty()) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+            }
+
+            // 5. Return as a Flux (Safe even if the list is empty)
+            return Flux.fromIterable(authorities);
         });
 
         return converter;
@@ -56,6 +69,7 @@ public class JwtDecoderConfig {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/auth/register").permitAll()
                         .pathMatchers("/auth/authenticate").permitAll()
+                     //   .pathMatchers("/auth/user/get/storekeepers").permitAll()
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
