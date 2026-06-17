@@ -43,7 +43,6 @@ public class PdfReportService {
                         table.addCell(header);
                     });
 
-            // Table Data Rows
             Font rowFont = FontFactory.getFont(FontFactory.HELVETICA, 8);
             for (TrackingLedgerDto dto : data) {
                 table.addCell(new Phrase(String.valueOf(dto.getTrackingId()), rowFont));

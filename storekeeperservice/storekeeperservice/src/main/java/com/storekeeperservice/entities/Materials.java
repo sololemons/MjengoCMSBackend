@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
@@ -29,6 +30,8 @@ public class Materials {
     private String denomination;
     @Column(name = "min_threshold")
     private Long minThreshold;
+    @Column(name = "warehouse_id")
+    private UUID warehouseId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;

@@ -5,6 +5,7 @@ import com.authenticationservice.security.dtos.AuthenticationResponse;
 import com.authenticationservice.security.dtos.RegisterRequest;
 import com.authenticationservice.security.dtos.RegisterResponse;
 import com.authenticationservice.security.services.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,9 +28,10 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request
+            @RequestBody AuthenticationRequest request,
+            HttpServletRequest servletRequest
     ) {
-        return ResponseEntity.ok(service.authenticate(request));
+        return ResponseEntity.ok(service.authenticate(request,servletRequest));
     }
 
 }

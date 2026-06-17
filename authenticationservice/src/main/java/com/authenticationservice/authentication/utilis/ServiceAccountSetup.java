@@ -6,7 +6,7 @@ import com.authenticationservice.authentication.exceptions.UserNotFoundException
 import com.authenticationservice.authentication.repositories.RolesRepository;
 import com.authenticationservice.authentication.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.NonNull;
+import org.springframework.lang.NonNull;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

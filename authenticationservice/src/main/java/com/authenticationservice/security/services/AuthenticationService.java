@@ -15,12 +15,16 @@ import com.authenticationservice.security.dtos.AuthenticationRequest;
 import com.authenticationservice.security.dtos.AuthenticationResponse;
 import com.authenticationservice.security.dtos.RegisterRequest;
 import com.authenticationservice.security.dtos.RegisterResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,17 +44,19 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final UsersRepository repository;
     private final HelperMethods helperMethods;
+
     @Transactional
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletRequest servletRequest) {
 
         String email = request.getEmail();
         String password = request.getPassword().trim();
 
         try {
 
-            authenticationManager.authenticate(
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password)
             );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
         } catch (DisabledException e) {
 
@@ -67,7 +73,7 @@ public class AuthenticationService {
 
         Users user = repository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
-
+        HttpSession session = servletRequest.getSession(true);
         String roleName = user.getRole().getName();
         Set<Permissions> permissions = user.getRole().getPermissions();
 
@@ -111,8 +117,7 @@ public class AuthenticationService {
                     .build();
 
             repository.save(user);
-        }
-        else {
+        } else {
 
             if (optionalUser.isEmpty()) {
                 throw new MissingFieldException(

@@ -13,20 +13,33 @@ import reactor.core.publisher.Flux;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.KeyFactory;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.List;
 
 @Configuration
 public class JwtDecoderConfig {
-    @Value("${secret.key}")
-    private String secretKey;
 
-
+    @Value("${app.security.jwt.public-key-path}")
+    private String publicKeyPath;
 
     @Bean
-    public ReactiveJwtDecoder reactiveJwtDecoder() {
-        byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey);
-        SecretKey key = new SecretKeySpec(keyBytes, "HmacSHA256");
-        return NimbusReactiveJwtDecoder.withSecretKey(key).build();
+    public ReactiveJwtDecoder reactiveJwtDecoder() throws Exception {
+        String keyContent = new String(Files.readAllBytes(Paths.get(publicKeyPath)))
+                .replace("-----BEGIN PUBLIC KEY-----", "")
+                .replace("-----END PUBLIC KEY-----", "")
+                .replaceAll("\\s", "");
+
+        byte[] keyBytes = Base64.getDecoder().decode(keyContent);
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        RSAPublicKey publicKey = (RSAPublicKey) keyFactory.generatePublic(keySpec);
+
+        return NimbusReactiveJwtDecoder.withPublicKey(publicKey).build();
     }
 
 
@@ -49,12 +62,10 @@ public class JwtDecoderConfig {
                             .toList()
             );
 
-            // 4. Add the ROLE_ prefix to the role and add to list
             if (role != null && !role.isEmpty()) {
                 authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
             }
 
-            // 5. Return as a Flux (Safe even if the list is empty)
             return Flux.fromIterable(authorities);
         });
 
@@ -69,7 +80,6 @@ public class JwtDecoderConfig {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/auth/register").permitAll()
                         .pathMatchers("/auth/authenticate").permitAll()
-                     //   .pathMatchers("/auth/user/get/storekeepers").permitAll()
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
