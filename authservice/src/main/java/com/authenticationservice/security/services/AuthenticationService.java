@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Optional;
 
 @Service
@@ -92,7 +93,7 @@ public class AuthenticationService {
                         refreshToken
                 )
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .sameSite("Strict")
                 .path("/auth/refresh")
                 .maxAge(Duration.ofDays(7))
@@ -180,6 +181,7 @@ public class AuthenticationService {
                 .build();
     }
     public AuthenticationResponse refresh(String refreshToken) {
+        System.out.println("TOKEN RECEIVED FROM CLIENT: " + refreshToken);
         String username = jwtService.extractUserName(refreshToken);
         Users user = repository.findByEmail(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -191,10 +193,23 @@ public class AuthenticationService {
             throw new UnauthorizedException("Refresh token no longer valid");
         }
 
-        String newAccessToken = jwtService.generateAccessToken(user);
+        helperMethods.revokeAllUserTokens(user);
+        refreshTokenRepository.save(storedToken);
 
+        String newAccessToken = jwtService.generateAccessToken(user);
+        log.info("generated new access token for user: {}", newAccessToken);
+        String newRefreshToken = jwtService.generateRefreshToken(user);
+
+        RefreshToken newTokenEntity = new RefreshToken();
+        newTokenEntity.setUser(user);
+        newTokenEntity.setToken(newRefreshToken);
+        newTokenEntity.setExpired(false);
+        newTokenEntity.setRevoked(false);
+        refreshTokenRepository.save(newTokenEntity);
+      log.info("generated new refresh token for user: {}", newRefreshToken);
         return AuthenticationResponse.builder()
                 .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
                 .role(user.getRole().getName())
                 .permissions(user.getRole().getPermissions().stream()
                         .map(Permissions::getPermissionName).toList())

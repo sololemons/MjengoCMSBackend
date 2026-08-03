@@ -3,6 +3,8 @@ package com.apigatewayservice.jwtvalidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
@@ -76,10 +78,13 @@ public class JwtDecoderConfig {
                                                          ReactiveJwtDecoder jwtDecoder) {
 
         http
+                .cors(Customizer.withDefaults())
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/auth/register").permitAll()
                         .pathMatchers("/auth/authenticate").permitAll()
+                        .pathMatchers("/auth/refresh").permitAll()
+                        .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

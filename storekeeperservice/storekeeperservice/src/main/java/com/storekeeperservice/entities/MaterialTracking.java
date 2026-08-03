@@ -41,6 +41,9 @@ public class MaterialTracking {
     @Column(name = "issued_to")
     private String issuedTo;
 
+    @Column(name = "issued_to_site")
+    private String issuedToSite;
+
     @Column(name = "receipt_file_url")
     private String receiptFileUrl;
 

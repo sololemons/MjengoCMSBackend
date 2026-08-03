@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily Site Log Report</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333333; margin: 0; padding: 20px;">
+
+<div style="max-width: 650px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+
+    <div style="background-color: #2c3e50; color: #ffffff; padding: 20px 30px;">
+        <h2 style="margin: 0; font-size: 24px; letter-spacing: 1px;">Daily Site Report</h2>
+        <p style="margin: 5px 0 0 0; font-size: 14px; color: #bdc3c7;">MjengoCMS Automated Dispatch</p>
+    </div>
+
+    <div style="padding: 20px 30px; border-bottom: 1px solid #eeeeee;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <tr>
+                <td style="padding: 5px 0;"><strong>Log ID:</strong> <span th:text="${dailyLog.id}">1045</span></td>
+                <td style="padding: 5px 0;"><strong>Date:</strong> <span th:text="${dailyLog.logDate}">2026-07-02</span></td>
+            </tr>
+            <tr>
+                <td style="padding: 5px 0;"><strong>Project ID:</strong> <span th:text="${dailyLog.constructionId}">PROJ-001</span></td>
+                <td style="padding: 5px 0;"><strong>Site Engineer ID:</strong> <span th:text="${dailyLog.siteEngineerId}">ENG-089</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="padding: 20px 30px;">
+        <h3 style="color: #2980b9; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px; font-size: 18px;">
+            Materials Consumed
+        </h3>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+            <tr style="background-color: #f8f9fa; color: #2c3e50;">
+                <th style="padding: 10px; border: 1px solid #dddddd; text-align: left;">Material Name</th>
+                <th style="padding: 10px; border: 1px solid #dddddd; text-align: left;">Quantity Consumed</th>
+                <th style="padding: 10px; border: 1px solid #dddddd; text-align: center;">Unit Of Measurement </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="material : ${dailyLog.materialsUsed}">
+                <td style="padding: 10px; border: 1px solid #dddddd;" th:text="${material.materialName}">Cement</td>
+                <td style="padding: 10px; border: 1px solid #dddddd; text-align: center; font-weight: bold;" th:text="${material.quantityConsumed}">50</td>
+                <td style="padding: 10px; border: 1px solid #dddddd; text-align: center; color: #c0392b;" th:text="${material.unitOfMeasurement}">KG</td>
+            </tr>
+            <!-- Fallback if list is empty -->
+            <tr th:if="${#lists.isEmpty(dailyLog.materialsUsed)}">
+                <td colspan="4" style="padding: 10px; border: 1px solid #dddddd; text-align: center; color: #7f8c8d;">No materials logged for this date.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- WORKER ATTENDANCE SECTION -->
+    <div style="padding: 10px 30px 30px 30px;">
+        <h3 style="color: #27ae60; border-bottom: 2px solid #2ecc71; padding-bottom: 8px; margin-bottom: 15px; font-size: 18px;">
+            Labor & Attendance
+        </h3>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+            <tr style="background-color: #f8f9fa; color: #2c3e50;">
+                <th style="padding: 10px; border: 1px solid #dddddd; text-align: left;">Worker Name</th>
+                <th style="padding: 10px; border: 1px solid #dddddd; text-align: left;">Role</th>
+                <th style="padding: 10px; border: 1px solid #dddddd; text-align: left;">Task Assigned</th>
+                <th style="padding: 10px; border: 1px solid #dddddd; text-align: center;">Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="worker : ${dailyLog.workerAttendances}">
+                <td style="padding: 10px; border: 1px solid #dddddd;" th:text="${worker.workerName}">John Doe</td>
+                <td style="padding: 10px; border: 1px solid #dddddd;" th:text="${worker.workerRole}">Mason</td>
+                <td style="padding: 10px; border: 1px solid #dddddd;" th:text="${worker.isPremiumDay}">Block laying</td>
+                <td style="padding: 10px; border: 1px solid #dddddd; text-align: center;" th:text="${worker.quantityReported}">20</td>
+                <td style="padding: 10px; border: 1px solid #dddddd; text-align: center;">
+                    <span th:text="${worker.status}" style="background-color: #e8f8f5; color: #1abc9c; padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold;">PRESENT</span>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(dailyLog.workerAttendances)}">
+                <td colspan="4" style="padding: 10px; border: 1px solid #dddddd; text-align: center; color: #7f8c8d;">No workers logged for this date.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="background-color: #ecf0f1; padding: 15px; text-align: center; font-size: 12px; color: #7f8c8d;">
+        This is an automated system message generated by MjengoCMS. Please do not reply directly to this email.
+    </div>
+
+</div>
+</body>
+</html>

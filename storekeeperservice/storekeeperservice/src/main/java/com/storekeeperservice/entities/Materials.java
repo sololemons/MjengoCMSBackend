@@ -24,17 +24,20 @@ public class Materials {
     private Long materialId;
     @Column(name = "material_name")
     private String materialName;
+    @Column(name = "brand_name")
+    private String brandName;
     @Column(name = "quantity")
     private long quantity;
     @Column(name = "denomination")
     private String denomination;
     @Column(name = "min_threshold")
     private Long minThreshold;
-    @Column(name = "warehouse_id")
-    private UUID warehouseId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "warehouse_id")
+    private WareHouse wareHouse;
     @Column(name = "machinery_condition")
     @Enumerated(EnumType.STRING)
     private MachineryCondition machineryCondition;

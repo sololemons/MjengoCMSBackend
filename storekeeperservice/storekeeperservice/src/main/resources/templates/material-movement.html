@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Material Movement Ledger Report</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 15mm;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10px;
+            color: #333333;
+        }
+        .header-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        .header-date {
+            text-align: center;
+            font-size: 10px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background-color: #ecf0f1;
+            padding: 8px 6px;
+            border: 1px solid #bdc3c7;
+            text-align: center;
+            font-weight: bold;
+            font-size: 10px;
+            color: #2c3e50;
+        }
+        td {
+            padding: 6px;
+            border: 1px solid #bdc3c7;
+            text-align: center;
+            font-size: 9px;
+        }
+        .text-left {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-title">MATERIAL MOVEMENT LEDGER REPORT</div>
+<div class="header-date">Generated: <span th:text="${generatedDate}">2026-07-02 10:00:00</span></div>
+
+<table>
+    <thead>
+    <tr>
+        <th style="width: 5%;">ID</th>
+        <th class="text-left" style="width: 15%;">Material Name</th>
+        <th style="width: 10%;">Category</th>
+        <th style="width: 10%;">Type</th>
+        <th style="width: 5%;">Qty</th>
+        <th style="width: 5%;">Unit</th>
+        <th style="width: 10%;">Recorded By</th>
+        <th style="width: 15%;">Issued To</th>
+        <th style="width: 10%;">Reason</th>
+        <th style="width: 15%;">Date & Time</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Iterate over the TrackingLedgerDto list -->
+    <tr th:each="row : ${ledgerData}">
+        <td th:text="${row.trackingId}">101</td>
+        <td class="text-left" th:text="${row.materialName}">Cement - Bamburi</td>
+        <td th:text="${row.category}">Consumables</td>
+
+        <td th:style="${row.movementType == 'ISSUED' ? 'color: #e67e22; font-weight: bold;' : (row.movementType == 'RECEIVED' ? 'color: #27ae60; font-weight: bold;' : '')}"
+            th:text="${row.movementType}">ISSUED</td>
+
+        <td th:text="${row.quantity}" style="font-weight: bold;">50</td>
+        <td th:text="${row.denomination}">Bags</td>
+        <td th:text="${row.recordedBy}">John Storekeeper</td>
+
+        <td th:text="${row.issuedTo ?: '-'}">Site Engineer</td>
+        <td th:text="${row.reasonForLoss ?: '-'}">-</td>
+        <td th:text="${row.timestamp}">2026-07-02 08:30</td>
+    </tr>
+
+    <tr th:if="${#lists.isEmpty(ledgerData)}">
+        <td colspan="10" style="padding: 20px; color: #7f8c8d; font-style: italic;">
+            No material movements recorded for this query.
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateMaterialTrackingDto {
     private Long quantity;
+    private String supplierName;
     private String denomination;
     private String issuedTo;
     private String reason;

@@ -1,48 +1,59 @@
 package com.storekeeperservice.utilis;
-
-import com.storekeeperservice.dtos.MaterialMovementType;
+import com.storekeeperservice.dtos.MaterialTrackingFilterDto;
 import com.storekeeperservice.entities.MaterialTracking;
+import com.storekeeperservice.entities.Materials;
+import com.storekeeperservice.entities.Suppliers;
+import com.storekeeperservice.entities.WareHouse;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MaterialTrackingSpecification {
 
-    public static Specification<MaterialTracking> hasSupplierId(Long supplierId) {
-        return (root, query, cb) ->
-                (supplierId == null)
-                        ? null
-                        : cb.equal(root.get("suppliers").get("id"), supplierId);
-    }
+    public static Specification<MaterialTracking> filterMaterialTracking(
+  MaterialTrackingFilterDto logFilterDto
+    ) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
 
-    public static Specification<MaterialTracking> hasMaterialId(Long materialId) {
-        return (root, query, cb) ->
-                (materialId == null)
-                        ? null
-                        : cb.equal(root.get("materials").get("id"), materialId);
-    }
+            if (logFilterDto.getSupplierName() != null && !logFilterDto.getSupplierName().isEmpty()) {
+                Join<MaterialTracking,Suppliers> supplierJoin = root.join("suppliers", JoinType.INNER);
+                predicates.add(
+                        criteriaBuilder.like(
+                                criteriaBuilder.lower(supplierJoin.get("supplierName")),
+                                "%" + logFilterDto.getSupplierName().toLowerCase() + "%"
+                        )
+                );
+            }
 
-    public static Specification<MaterialTracking> hasMovementType(MaterialMovementType type) {
-        return (root, query, cb) ->
-                (type == null)
-                        ? null
-                        : cb.equal(root.get("materialMovementType"), type);
-    }
 
-    public static Specification<MaterialTracking> hasRecordedBy(String recordedBy) {
-        return (root, query, cb) ->
-                (recordedBy == null || recordedBy.isBlank())
-                        ? null
-                        : cb.equal(root.get("recordedBy"), recordedBy);
-    }
+            if (logFilterDto.getMaterialName() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("materials").get("materialName"), logFilterDto.getMaterialName()));
+            }
 
-    public static Specification<MaterialTracking> isBetweenDates(LocalDateTime startDate, LocalDateTime endDate) {
-        return (root, query, cb) -> {
-            if (startDate == null && endDate == null) return null;
-            if (startDate == null) return cb.lessThanOrEqualTo(root.get("timestamp"), endDate);
-            if (endDate == null) return cb.greaterThanOrEqualTo(root.get("timestamp"), startDate);
+            if (logFilterDto.getMovementType() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("materialMovementType"), logFilterDto.getMovementType()));
+            }
 
-            return cb.between(root.get("timestamp"), startDate, endDate);
+            if (logFilterDto.getRecordedBy() != null && !logFilterDto.getRecordedBy().isBlank()) {
+                predicates.add(criteriaBuilder.equal(root.get("recordedBy"), logFilterDto.getRecordedBy()));
+            }
+
+            if (logFilterDto.getStartDate() != null && logFilterDto.getEndDate() != null) {
+                predicates.add(criteriaBuilder.between(root.get("timestamp"), logFilterDto.getStartDate(), logFilterDto.getEndDate()));
+            } else if (logFilterDto.getStartDate() != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("timestamp"), logFilterDto.getStartDate()));
+            } else if (logFilterDto.getEndDate() != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("timestamp"), logFilterDto.getEndDate()));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
+
 }

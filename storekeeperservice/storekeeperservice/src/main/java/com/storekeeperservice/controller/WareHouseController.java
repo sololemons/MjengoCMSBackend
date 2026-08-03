@@ -5,10 +5,9 @@ import com.storekeeperservice.services.WareHouseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/store/warehouse")
 @RestController
@@ -21,5 +20,11 @@ public class WareHouseController {
     public ResponseEntity<String> addWareHouse(@RequestBody WareHouseDto wareHouseDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(wareHouseService.addWareHouse(wareHouseDto));
     }
+
+    @GetMapping("/get")
+    public ResponseEntity<List<WareHouseDto>> getWareHouses() {
+        return ResponseEntity.ok(wareHouseService.getWareHouses());
+    }
+
 
 }

@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MaterialRequestDto {
     private String materialName;
-    private long quantity;
+    private Long quantity;
     private String denomination;
+    private String  brandName;
+    private String wareHouseName;
     private Long categoryId;
-    private String machineryCondition;
-    private Long minimumStockLevel;
+    private Long minThreshold;
 
 }

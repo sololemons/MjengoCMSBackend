@@ -10,14 +10,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class MaterialTrackingAuditDto {
-    private Long auditId;
-    private Long originalTrackingId;
-    private String actionType;
-    private String materialName;
-    private String category;
-    private long oldQuantity;
-    private long newQuantity;
-    private String reason;
-    private String changedBy;
-    private String changedAt;
+
+  private Long auditId;
+  private Long originalTrackingId;
+  private String actionType;
+  private String materialName;
+  private String category;
+  private long oldQuantity;
+  private long newQuantity;
+  private String oldIssuer;
+  private String newIssuer;
+  private String reason;
+  private String changedBy;
+  private String changedAt;
 }

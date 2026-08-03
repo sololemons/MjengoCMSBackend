@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReturnMaterialDto {
-    private Long originalTrackingId;
-    private long quantityReturned;
-    private String returnedBy;
-    private String machineryCondition;
+
+  private Long originalTrackingId;
+  private long quantityReturned;
+  private String returnedBy;
 }

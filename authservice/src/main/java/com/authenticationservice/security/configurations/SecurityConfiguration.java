@@ -23,38 +23,40 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-    private final UserDetailsService userDetailsService;
-    private final JwtAuthenticationFilter jwtAuthFilter;
-    private final AuthenticationProvider authenticationProvider;
+  private final UserDetailsService userDetailsService;
+  private final JwtAuthenticationFilter jwtAuthFilter;
+  private final AuthenticationProvider authenticationProvider;
 
-    private static final String[] PUBLIC_URLS = {
-           "auth/register",
-            "auth/authenticate",
+  private static final String[] PUBLIC_URLS = {
+      "auth/register",
+      "auth/authenticate",
+      "auth/refresh",
 
-    };
+  };
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req -> req
-                        .requestMatchers(PUBLIC_URLS).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setContentType("application/json");
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"Please log in to access this resource.\"}");
-                        })
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http
+        .csrf(AbstractHttpConfigurer::disable)
+        .authorizeHttpRequests(req -> req
+            .requestMatchers(PUBLIC_URLS).permitAll()
+            .anyRequest().authenticated()
+        )
+        .exceptionHandling(exception -> exception
+            .authenticationEntryPoint((request, response, authException) -> {
+              response.setContentType("application/json");
+              response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+              response.getWriter().write(
+                  "{\"error\": \"Unauthorized\", \"message\": \"Please log in to access this resource.\"}");
+            })
 
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .userDetailsService(userDetailsService)
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+        )
+        .sessionManagement(session -> session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        )
+        .userDetailsService(userDetailsService)
+        .authenticationProvider(authenticationProvider)
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        .build();
+  }
 }
