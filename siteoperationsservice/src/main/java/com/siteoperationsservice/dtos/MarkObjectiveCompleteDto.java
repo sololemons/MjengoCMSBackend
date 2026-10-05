@@ -15,5 +15,4 @@ import java.time.LocalDate;
 public class MarkObjectiveCompleteDto {
     private String constructionId;
     private Long objectiveId;
-    private LocalDate completionDate;
 }

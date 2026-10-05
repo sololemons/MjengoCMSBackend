@@ -25,18 +25,16 @@ public class DailyLog extends BaseEntity {
     @Column(name = "log_date", nullable = false)
     private LocalDate logDate;
 
-    @Column(name = "site_engineer_id", nullable = false)
-    private String siteEngineerId;
+    @Column(name = "site_engineer_email", nullable = false)
+    private String siteEngineerEmail;
 
     @Column(name = "is_log_sent", nullable = false)
     private boolean isLogSent;
 
 
-    @OneToMany(mappedBy = "constructionProject", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "worker_log_id")
+    @OneToMany(mappedBy = "dailyLog", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<WorkerAttendance> workerAttendances;
 
-    @OneToMany(mappedBy = "constructionProject", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "material_log_id")
+    @OneToMany(mappedBy = "dailyLog", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<MaterialUsed> materialsUsed;
 }

@@ -10,6 +10,6 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddPermissionToRoleDto {
-    private Long roleId;
-    private Set<Long> permissionIds;
+    private String roleName;
+    private Set<String> permissionNames;
 }

@@ -18,9 +18,8 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false, length = 512)
+    @Column(unique = true, nullable = false, length = 1000, columnDefinition = "VARCHAR(1000) CHARACTER SET ascii")
     private String token;
-
     private boolean revoked;
 
     private boolean expired;

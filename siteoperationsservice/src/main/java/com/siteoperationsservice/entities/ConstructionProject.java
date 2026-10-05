@@ -27,11 +27,18 @@ public class ConstructionProject extends BaseEntity {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "assigned_site_engineer_emails")
+    private String assignedEngineerEmails;
+
     @Column(nullable = false,name = "latitude",updatable = false)
     private Double latitude;
 
     @Column(nullable = false,name = "longitude",updatable = false)
     private Double longitude;
+
+    @Column(name = "location_name",updatable = false)
+    private String locationName;
+
 
     @Column(name = "allowed_radius_meters")
     private Double allowedRadiusMeters;
@@ -42,11 +49,6 @@ public class ConstructionProject extends BaseEntity {
     @Column(name = "estimated_end_date",updatable = false)
     private LocalDate estimatedEndDate;
 
-    @Column(name = "updated_at")
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    @Transient
     @Column(name = "overall_progress")
     private Double overallProgress;
 

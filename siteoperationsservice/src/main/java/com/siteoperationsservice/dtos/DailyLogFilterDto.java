@@ -7,7 +7,7 @@ import java.time.LocalDate;
 public class DailyLogFilterDto {
     private Long constructionId;
     private Boolean isPremiumDay;
-    private Long siteEngineerId;
+    private String siteEngineerEmail;
     private LocalDate logDate;
     private Integer month;
     private Integer year;

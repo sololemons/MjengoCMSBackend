@@ -20,83 +20,98 @@ import java.util.List;
 @Slf4j
 public class Helpers {
 
-    private final ConstructionRepository constructionRepository;
+  private final ConstructionRepository constructionRepository;
+  private final GeocodingService geocodingService;
 
-    public ConstructionProject createConstruction(ConstructionDto constructionDto) {
+  public ConstructionProject createConstruction(ConstructionDto constructionDto) {
 
-        ConstructionProject project = new ConstructionProject();
-        project.setConstructionName(constructionDto.getConstructionName());
-        project.setDescription(constructionDto.getDescription());
-        project.setLatitude(constructionDto.getLatitude() != null ? Double.valueOf(constructionDto.getLatitude()) : null);
-        project.setLongitude(constructionDto.getLongitude() != null ? Double.valueOf(constructionDto.getLongitude()) : null);
-        project.setStartDate(constructionDto.getStartDate());
-        project.setEstimatedEndDate(constructionDto.getEstimatedEndDate());
+    ConstructionProject project = new ConstructionProject();
+    project.setConstructionName(constructionDto.getConstructionName());
+    project.setDescription(constructionDto.getDescription());
+    project.setStartDate(constructionDto.getStartDate());
+    project.setEstimatedEndDate(constructionDto.getEstimatedEndDate());
+    project.setAssignedEngineerEmails(constructionDto.getAssignedEngineerEmail());
 
-        if (constructionDto.getProjectObjectives() != null) {
-            List<ProjectObjective> objectives = constructionDto.getProjectObjectives().
-                    stream().
-                    map(
-                            dto -> {
-                                ProjectObjective objective = new ProjectObjective();
-                                objective.setTitle(dto.getTitle());
-                                objective.setDescription(dto.getDescription());
-                                objective.setEstimatedDurationDays(dto.getEstimatedDurationDays());
-                                objective.setCompleted(dto.isCompleted());
-                                objective.setDateCompleted(dto.getDateCompleted());
-                                objective.setConstructionProject(project);
-                                return objective;
-                            }).toList();
+    Double lat =
+        constructionDto.getLatitude() != null ? Double.valueOf(constructionDto.getLatitude())
+            : null;
+    Double lon =
+        constructionDto.getLongitude() != null ? Double.valueOf(constructionDto.getLongitude())
+            : null;
 
-            project.setObjectives(objectives);
-        }
+    project.setLatitude(lat);
+    project.setLongitude(lon);
 
-        if (constructionDto.getProgressImages() != null) {
-            List<ProjectProgressImage> images = constructionDto.getProgressImages().
-                    stream().
-                    map(
-                            dto -> {
-                                ProjectProgressImage image = new ProjectProgressImage();
-                                image.setImageUrl(dto.getImageUrl());
-                                image.setLatitude(dto.getLatitude());
-                                image.setLongitude(dto.getLongitude());
-                                image.setDescription(dto.getDescription());
-                                image.setImageDate(dto.getImageDate());
-                                image.setProject(project);
-                                return image;
-                            }).toList();
+    String locationName = geocodingService.getLocationName(lat, lon);
+    project.setLocationName(locationName);
 
-            project.setProgressImages(images);
-        }
-        return project;
+    if (constructionDto.getProjectObjectives() != null) {
+      List<ProjectObjective> objectives = constructionDto.getProjectObjectives().
+          stream().
+          map(
+              dto -> {
+                ProjectObjective objective = new ProjectObjective();
+                objective.setTitle(dto.getTitle());
+                objective.setDescription(dto.getDescription());
+                objective.setEstimatedDurationDays(dto.getEstimatedDurationDays());
+                objective.setCompleted(dto.isCompleted());
+                objective.setDateCompleted(dto.getDateCompleted());
+                objective.setConstructionProject(project);
+                return objective;
+              }).toList();
+
+      project.setObjectives(objectives);
     }
-    @Async("taskExecutor")
-    @Transactional
-    public void updateProjectProgressMetric(String projectId) {
-        log.info("calculating progress metrics for project ID: {}", projectId);
 
-        ConstructionProject project = constructionRepository.findById(projectId)
-                .orElseThrow(() -> new ResourceNotFoundException("Project record not found with ID: " + projectId));
+    if (constructionDto.getProgressImages() != null) {
+      List<ProjectProgressImage> images = constructionDto.getProgressImages().
+          stream().
+          map(
+              dto -> {
+                ProjectProgressImage image = new ProjectProgressImage();
+                image.setImageUrl(dto.getImageUrl());
+                image.setLatitude(dto.getLatitude());
+                image.setLongitude(dto.getLongitude());
+                image.setDescription(dto.getDescription());
+                image.setImageDate(dto.getImageDate());
+                image.setProject(project);
+                return image;
+              }).toList();
 
-        List<ProjectObjective> objectives = project.getObjectives();
-
-        if (objectives == null || objectives.isEmpty()) {
-            project.setOverallProgress(0.0);
-            constructionRepository.save(project);
-            return;
-        }
-
-        long achievedCount = objectives.stream()
-                .filter(ProjectObjective::isCompleted)
-                .count();
-
-        long totalCount = objectives.size();
-        double rawPercentage = ((double) achievedCount / totalCount) * 100;
-        double roundedPercentage = Math.round(rawPercentage * 100.0) / 100.0;
-
-        project.setOverallProgress(roundedPercentage);
-        constructionRepository.save(project);
-
-        log.info("Project '{}' progress metric synchronized successfully to: {}% ({}/{})",
-                project.getConstructionName(), roundedPercentage, achievedCount, totalCount);
+      project.setProgressImages(images);
     }
+    return project;
+  }
+
+  @Async("taskExecutor")
+  @Transactional
+  public void updateProjectProgressMetric(String projectId) {
+    log.info("calculating progress metrics for project ID: {}", projectId);
+
+    ConstructionProject project = constructionRepository.findById(projectId)
+        .orElseThrow(
+            () -> new ResourceNotFoundException("Project record not found with ID: " + projectId));
+
+    List<ProjectObjective> objectives = project.getObjectives();
+
+    if (objectives == null || objectives.isEmpty()) {
+      project.setOverallProgress(0.0);
+      constructionRepository.save(project);
+      return;
+    }
+
+    long achievedCount = objectives.stream()
+        .filter(ProjectObjective::isCompleted)
+        .count();
+
+    long totalCount = objectives.size();
+    double rawPercentage = ((double) achievedCount / totalCount) * 100;
+    double roundedPercentage = Math.round(rawPercentage * 100.0) / 100.0;
+
+    project.setOverallProgress(roundedPercentage);
+    constructionRepository.save(project);
+
+    log.info("Project '{}' progress metric synchronized successfully to: {}% ({}/{})",
+        project.getConstructionName(), roundedPercentage, achievedCount, totalCount);
+  }
 }

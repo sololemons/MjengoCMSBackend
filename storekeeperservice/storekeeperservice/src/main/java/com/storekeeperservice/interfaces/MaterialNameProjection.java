@@ -1,5 +1,8 @@
 package com.storekeeperservice.interfaces;
 
 public interface MaterialNameProjection {
-    String getMaterialName();
+
+  String getMaterialName();
+
+  Long getMaterialId();
 }

@@ -3,6 +3,7 @@ package com.storekeeperservice.controller;
 import com.storekeeperservice.dtos.MaterialDto;
 import com.storekeeperservice.dtos.MaterialLogFilterDto;
 import com.storekeeperservice.dtos.MaterialRequestDto;
+import com.storekeeperservice.interfaces.MaterialNameProjection;
 import com.storekeeperservice.records.MaterialResponseDto;
 import com.storekeeperservice.services.MaterialService;
 import java.util.List;
@@ -51,9 +52,9 @@ public class MaterialController {
     return ResponseEntity.status(200).body(paginatedLogs);
   }
 
-  @GetMapping("/names")
-  public ResponseEntity<List<String>> getMaterialNames() {
-    return ResponseEntity.ok(materialService.getAllMaterialNames());
+  @GetMapping("/names/id")
+  public ResponseEntity<List<MaterialNameProjection>> getMaterialNamesAndIds() {
+    return ResponseEntity.ok(materialService.getAllMaterialNamesAndId());
   }
 
 

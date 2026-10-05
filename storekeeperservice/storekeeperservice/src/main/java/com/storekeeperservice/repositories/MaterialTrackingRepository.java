@@ -51,7 +51,7 @@ public interface MaterialTrackingRepository extends JpaRepository<MaterialTracki
       "JOIN mt.materials m " +
       "WHERE mt.materialMovementType = 'ISSUED' " +
       "AND mt.timestamp BETWEEN :startDate AND :endDate " +
-      "GROUP BY  materialName,frequency,totalQuantity,denomination " +
+      "GROUP BY  materialName,denomination " +
       "ORDER BY COUNT(mt.trackingId) DESC")
   List<MaterialMovingProjection> getTopFastMovingMaterials(
       @Param("startDate") LocalDateTime startDate,

@@ -22,6 +22,9 @@ public class ProjectObjective {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
     @Column(name = "estimated_duration_days")
     private Integer estimatedDurationDays;
 

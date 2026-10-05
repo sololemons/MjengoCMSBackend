@@ -2,10 +2,12 @@ package com.authenticationservice.authentication.controllers;
 
 import com.authenticationservice.authentication.services.UserService;
 import com.mjengoshareddtos.UserDto;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,9 +46,15 @@ public class UserController {
     @DeleteMapping("/delete/user")
     public ResponseEntity<String> deleteUser(@RequestParam long userId) {
         return ResponseEntity.ok(
-                userService.deleteUser(userId)
+            userService.deleteUser(userId)
         );
 
+    }
+    @GetMapping("/fetch/roles")
+    public ResponseEntity<List<String>> fetchRoles() {
+        return ResponseEntity.ok(
+                userService.fetchRoles()
+        );
     }
     @PreAuthorize("hasAuthority('CREATE_PERMISSIONS')")
     @PatchMapping("/toggle/account/status")
@@ -60,4 +68,13 @@ public class UserController {
         return ResponseEntity.ok(userService.getStorekeepers());
 
 }
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> getMyDetails(Principal principal) {
+
+        String email = principal.getName();
+
+        UserDto currentUser = userService.getUserByEmail(email);
+
+        return ResponseEntity.ok(currentUser);
+    }
 }

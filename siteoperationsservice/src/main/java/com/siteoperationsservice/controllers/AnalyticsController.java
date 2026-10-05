@@ -17,7 +17,7 @@ public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
 
-    @GetMapping("/dashboard}")
+    @GetMapping("/dashboard")
     public ResponseEntity<Map<String, Object>> getMostUsedMaterials(@RequestParam String constructionId, @RequestParam String timeFilter) {
         return ResponseEntity.ok(analyticsService.getProjectDashboardData(constructionId, timeFilter));
     }

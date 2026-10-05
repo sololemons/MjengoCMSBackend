@@ -15,7 +15,7 @@ public class DailyLogResponseDto {
     private Long id;
     private String constructionId;
     private LocalDate logDate;
-    private Long siteEngineerId;
+    private String siteEngineerEmail;
 
     private List<WorkerAttendanceResponseDto> workerAttendances;
     private List<MaterialUsedResponseDto> materialsUsed;

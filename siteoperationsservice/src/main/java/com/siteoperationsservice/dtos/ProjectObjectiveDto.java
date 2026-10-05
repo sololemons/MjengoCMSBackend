@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Setter
 public class ProjectObjectiveDto {
     private String description;
+    private Long objectiveId;
     private String title;
     private Integer estimatedDurationDays;
     private boolean isCompleted;

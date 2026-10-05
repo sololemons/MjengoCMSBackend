@@ -2,6 +2,7 @@ package com.siteoperationsservice.controllers;
 
 import com.siteoperationsservice.dtos.*;
 import com.siteoperationsservice.services.ConstructionService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +28,14 @@ public class ConstructionController {
         String message = constructionService.updateConstructionFields(
                 constructionId,
                 constructionDto);
+        return ResponseEntity.status(HttpStatus.OK).body(message);
+    }
+    @PostMapping("/add/construction/objectives")
+    public ResponseEntity<String> addConstructionObjectives(@RequestParam String constructionId,
+                                                            @RequestBody AddObjectivesDto addObjectivesDto) {
+        String message = constructionService.addConstructionObjectives(
+                constructionId,
+                addObjectivesDto);
         return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 
@@ -88,9 +97,18 @@ public class ConstructionController {
         return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 
-    @PatchMapping("/update/progress/metrics")
+    @PostMapping("/update/progress/metrics")
     public void markObjectiveAsCompleted(@RequestBody MarkObjectiveCompleteDto markObjectiveCompleteDto) {
         constructionService.updateProjectProgressMetric(markObjectiveCompleteDto);
+    }
+    @PostMapping("/start/objective")
+    public void markObjectiveAsStarted(@RequestBody MarkObjectiveCompleteDto markObjectiveStartedDto) {
+        constructionService.markObjectiveAsStarted(markObjectiveStartedDto);
+    }
+    @GetMapping("/fetch/construction/by/engineer/email")
+    public ResponseEntity<List<ConstructionDto>> fetchConstructions(@RequestParam String engineerEmail) {
+        List<ConstructionDto> constructionDto = constructionService.fetchConstructionsByEngineerNames(engineerEmail);
+        return ResponseEntity.ok(constructionDto);
     }
 
 }

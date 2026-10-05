@@ -14,7 +14,7 @@ import java.util.List;
 public class DailyLogRequestDto {
     private String constructionId;
     private LocalDate logDate;
-    private Long siteEngineerId;
+    private String siteEngineerEmail;
     private List<WorkerAttendanceDto> workerAttendances;
     private List<MaterialUsedDto> materialsUsed;
 }

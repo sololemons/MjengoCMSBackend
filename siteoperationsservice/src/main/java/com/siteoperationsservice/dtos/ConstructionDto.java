@@ -14,7 +14,9 @@ import java.util.List;
 @Setter
 public class ConstructionDto {
     private String constructionName;
+    private String constructionId;
     private String description;
+    private String assignedEngineerEmail;
     private String latitude;
     private String longitude;
     private LocalDate startDate;

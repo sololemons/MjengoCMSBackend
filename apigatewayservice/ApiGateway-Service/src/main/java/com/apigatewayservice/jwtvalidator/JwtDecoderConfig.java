@@ -1,5 +1,6 @@
 package com.apigatewayservice.jwtvalidator;
 
+import com.apigatewayservice.config.CustomAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +30,10 @@ public class JwtDecoderConfig {
     @Value("${app.security.jwt.public-key-path}")
     private String publicKeyPath;
 
-    @Bean
+  public JwtDecoderConfig(CustomAuthenticationEntryPoint customEntryPoint) {
+  }
+
+  @Bean
     public ReactiveJwtDecoder reactiveJwtDecoder() throws Exception {
         String keyContent = new String(Files.readAllBytes(Paths.get(publicKeyPath)))
                 .replace("-----BEGIN PUBLIC KEY-----", "")
@@ -75,24 +79,29 @@ public class JwtDecoderConfig {
     }
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http,
-                                                         ReactiveJwtDecoder jwtDecoder) {
+        ReactiveJwtDecoder jwtDecoder,
+        CustomAuthenticationEntryPoint customEntryPoint) {
 
         http
-                .cors(Customizer.withDefaults())
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/auth/register").permitAll()
-                        .pathMatchers("/auth/authenticate").permitAll()
-                        .pathMatchers("/auth/refresh").permitAll()
-                        .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .anyExchange().authenticated()
+            .cors(Customizer.withDefaults())
+            .csrf(ServerHttpSecurity.CsrfSpec::disable)
+            .authorizeExchange(exchanges -> exchanges
+                .pathMatchers("/auth/register").permitAll()
+                .pathMatchers("/auth/authenticate").permitAll()
+                .pathMatchers("/auth/refresh").permitAll()
+                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .anyExchange().authenticated()
+            )
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .authenticationEntryPoint(customEntryPoint)
+                .jwt(jwt -> jwt
+                    .jwtDecoder(jwtDecoder)
+                    .jwtAuthenticationConverter(jwtAuthenticationConverter())
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt
-                                .jwtDecoder(jwtDecoder)
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
-                        )
-                );
+            )
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint(customEntryPoint)
+            );
 
         return http.build();
     }

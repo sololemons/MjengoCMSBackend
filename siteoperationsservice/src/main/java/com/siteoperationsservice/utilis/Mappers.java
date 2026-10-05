@@ -15,7 +15,9 @@ public class Mappers {
 
         return new ConstructionDto(
                 project.getConstructionName(),
+                project.getId(),
                 project.getDescription(),
+                project.getAssignedEngineerEmails(),
                 project.getLatitude() != null ? project.getLatitude().toString() : null,
                 project.getLongitude() != null ? project.getLongitude().toString() : null,
                 project.getStartDate() != null ? project.getStartDate() : null,
@@ -35,6 +37,7 @@ public class Mappers {
 
         return new ProjectObjectiveDto(
                 objective.getDescription(),
+                objective.getId(),
                 objective.getTitle(),
                 objective.getEstimatedDurationDays(),
                 objective.isCompleted(),
@@ -121,7 +124,7 @@ public class Mappers {
                 .id(dailyLog.getId())
                 .constructionId(dailyLog.getConstructionId())
                 .logDate(dailyLog.getLogDate())
-                .siteEngineerId(Long.valueOf(dailyLog.getSiteEngineerId()))
+                .siteEngineerEmail(dailyLog.getSiteEngineerEmail())
                 .workerAttendances(mapWorkerAttendances(dailyLog.getWorkerAttendances()))
                 .materialsUsed(mapMaterialsUsed(dailyLog.getMaterialsUsed()))
                 .build();

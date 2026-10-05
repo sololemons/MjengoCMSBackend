@@ -3,6 +3,8 @@ package com.authenticationservice.authentication.services;
 import com.authenticationservice.authentication.dtos.AccountStatus;
 import com.authenticationservice.authentication.entities.Roles;
 import com.authenticationservice.authentication.entities.Users;
+import com.authenticationservice.authentication.exceptions.UserNotFoundException;
+import com.authenticationservice.authentication.repositories.RolesRepository;
 import com.authenticationservice.authentication.repositories.UsersRepository;
 import com.authenticationservice.authentication.utilis.DtoMapper;
 import com.authenticationservice.authentication.utilis.HelperMethods;
@@ -21,6 +23,7 @@ public class UserService {
     private final AuthenticationService authenticationService;
     private final HelperMethods helperMethods;
     private final DtoMapper dtoMapper;
+    private final RolesRepository rolesRepository;
 
     public List<UserDto> getAllUsers() {
 
@@ -91,5 +94,20 @@ public class UserService {
         return storekeepers.stream()
                 .map(dtoMapper::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    public List<String> fetchRoles() {
+        return rolesRepository.findAll()
+                .stream()
+                .map(Roles::getName)
+                .collect(Collectors.toList());
+    }
+
+    public UserDto getUserByEmail(String email) {
+
+        Users user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        return dtoMapper.mapToDto(user);
     }
 }

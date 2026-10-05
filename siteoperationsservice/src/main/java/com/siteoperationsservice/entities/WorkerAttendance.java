@@ -32,6 +32,10 @@ public class WorkerAttendance {
     @Column(name = "is_premium_day", nullable = false)
     private boolean isPremiumDay;
 
+    @JoinColumn(name = "daily_log_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DailyLog dailyLog;
+
     @JoinColumn(name = "project_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private ConstructionProject project;

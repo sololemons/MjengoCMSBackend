@@ -27,4 +27,8 @@ public class MaterialUsed {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "construction_project_id", nullable = false)
     private ConstructionProject constructionProject;
+
+    @JoinColumn(name = "daily_log_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DailyLog dailyLog;
 }

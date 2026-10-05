@@ -16,7 +16,6 @@ import com.storekeeperservice.utilis.MapperDtos;
 import com.storekeeperservice.utilis.MaterialSpecification;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -132,11 +131,8 @@ public class MaterialService {
     return materials.map(MapperDtos::mapToDto);
   }
 
-  public List<String> getAllMaterialNames() {
-    return materialsRepository.findAllProjectedBy()
-        .stream()
-        .map(MaterialNameProjection::getMaterialName)
-        .collect(Collectors.toList());
+  public List<MaterialNameProjection> getAllMaterialNamesAndId() {
+    return materialsRepository.findAllProjectedBy();
   }
 
 

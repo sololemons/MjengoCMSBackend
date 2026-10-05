@@ -24,17 +24,19 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleUserNotFoundExceptions(UserNotFoundException ex) {
-        return buildErrorResponse(HttpStatus.NOT_FOUND, "User not found", ex.getMessage());
-    }
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleResourceNotFoundException(ResourceNotFoundException ex) {
         return buildErrorResponse(HttpStatus.NOT_FOUND, "Resource not found", ex.getMessage());
     }
-    @ExceptionHandler
-    public ResponseEntity<Map<String, Object>> handle(GeofenceViolationException ex) {
+
+    @ExceptionHandler(GeofenceViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleGeofenceViolationException(GeofenceViolationException ex) {
         return buildErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, "Location Not acceptable", ex.getMessage());
+    }
+
+    @ExceptionHandler(ImageMetadataViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleImageMetadataViolationException(ImageMetadataViolationException ex) {
+        return buildErrorResponse(HttpStatus.NOT_ACCEPTABLE, "Image Location Data Missing", ex.getMessage());
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
